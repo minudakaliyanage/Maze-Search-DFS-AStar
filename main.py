@@ -62,7 +62,7 @@ def dfs(start_node, goal_node, barrier_nodes):
         x, y = divmod(curr_node, 6)  # converting the node into coordinates
 
         if curr_node == goal_node:  # checks whether goal is reached
-            return path, len(visited), len(path) - 1
+            return path, len(visited)
         # iterates over the eight possible directions from the current node and takes their coordinates and are
         # sorted according to the increasing order
         neighbours = sorted([(x + Horizontal[i], y + Vertical[i]) for i in range(8)],
@@ -73,22 +73,22 @@ def dfs(start_node, goal_node, barrier_nodes):
         goal_neighbor = (goal_node // 6, goal_node % 6)  # extract row and column coordinates for the goal node
         # checks if goal node is in neighbors and is a valid move
         if goal_neighbor in neighbours and is_valid_move(goal_neighbor[0], goal_neighbor[1], barrier_nodes, visited):
-            visited.add(curr_node)
-            stack.append((goal_node, path + [goal_node]))
+            visited.add(curr_node)  # mark the current node as visited
+            stack.append((goal_node, path + [goal_node]))  # goal node added to the stack
             continue
 
         for neighbour_X, neighbour_Y in neighbours:
-            if not is_valid_move(neighbour_X, neighbour_Y, barrier_nodes, visited):
-                continue
+            if not is_valid_move(neighbour_X, neighbour_Y, barrier_nodes, visited):  # check whether the move is valid
+                continue  # if invalid it will go to the next iteration
 
             visited.add(curr_node)
-            neighbour_node = neighbour_X * 6 + neighbour_Y
-            stack.append((neighbour_node, path + [neighbour_node]))
+            neighbour_node = neighbour_X * 6 + neighbour_Y  # convert the coordinate into node index
+            stack.append((neighbour_node, path + [neighbour_node]))  # neighbor node added to the stack
+    # if the stack becomes empty and the goal is not reached
+    return [], len(visited)
 
-    return [], len(visited), 0
 
-
-path, nodes_visited, time_for_goal = dfs(start_node, goal_node, barrier_nodes)
+path, nodes_visited = dfs(start_node, goal_node, barrier_nodes)
 print("Visited Nodes:", path)
 print("Time to Find Goal (in minutes):", nodes_visited)
 print("Final Path:", path)
