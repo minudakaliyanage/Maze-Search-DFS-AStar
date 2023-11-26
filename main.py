@@ -1,5 +1,7 @@
 import random
 
+# Task 1
+
 # creating the maze using list
 maze = [
     [0, 6, 12, 18, 24, 30],
@@ -19,6 +21,7 @@ remaining_nodes = [node for row in maze for node in row if node != start_node an
 # out of the remaining nodes getting 4 random nodes
 barrier_nodes = random.sample(remaining_nodes, 4)
 print(barrier_nodes)
+print()
 
 # visual representation of the maze with start, goal and barriers
 def display_maze():
@@ -37,6 +40,9 @@ def display_maze():
 
 # call the display_maze function to see the maze
 display_maze()
+
+# Task 2
+
 # initializing direction vectors
 Horizontal = [-1, 0, 1, 0, -1, 1, 1, -1]
 Vertical = [0, -1, 0, 1, -1, -1, 1, 1]
@@ -89,6 +95,30 @@ def dfs(start_node, goal_node, barrier_nodes):
 
 
 path, nodes_visited = dfs(start_node, goal_node, barrier_nodes)
+print("")
 print("Visited Nodes:", path)
 print("Time to Find Goal (in minutes):", nodes_visited)
 print("Final Path:", path)
+print("")
+
+
+# Task 3
+def manhattan_dis(maze, goal_node):  # maze to iterate through each node and goal node to get its coordinates
+    heu_costs = {}  # dictionary to show heuristic costs for each node
+    goal_x, goal_y = divmod(goal_node, 6)  # getting x and y coordinates of goal
+    for row in maze:  # iterating through maze
+        for node in row:  # each node in each row
+            curr_x, curr_y = divmod(node, 6)  # coordinates of the current node
+            heu_cost = abs(curr_x - goal_x) + abs(curr_y - goal_y)  # equation for manhattan distance
+            heu_costs[node] = heu_cost  # stores the heuristic cost in the dictionary
+
+    return heu_costs
+
+
+final_heuristic_costs = manhattan_dis(maze, goal_node)
+
+for node, cost in final_heuristic_costs.items():  # printing each h cost for each node
+    print(f"Heuristic cost for node {node}: {cost}")
+
+
+#Task 4
