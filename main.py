@@ -1,4 +1,5 @@
 import random
+import heapq
 
 # Task 1
 
@@ -20,7 +21,7 @@ goal_node = random.randint(24, 35)
 remaining_nodes = [node for row in maze for node in row if node != start_node and node != goal_node]
 # out of the remaining nodes getting 4 random nodes
 barrier_nodes = random.sample(remaining_nodes, 4)
-print(barrier_nodes)
+print("Barrier Nodes - " + str(barrier_nodes))
 print()
 
 # visual representation of the maze with start, goal and barriers
@@ -95,7 +96,7 @@ def dfs(start_node, goal_node, barrier_nodes):
 
 
 path, nodes_visited = dfs(start_node, goal_node, barrier_nodes)
-print("")
+print("-----------------Depth First Search-----------------")
 print("Visited Nodes:", path)
 print("Time to Find Goal (in minutes):", nodes_visited)
 print("Final Path:", path)
@@ -117,8 +118,47 @@ def manhattan_dis(maze, goal_node):  # maze to iterate through each node and goa
 
 final_heuristic_costs = manhattan_dis(maze, goal_node)
 
-for node, cost in final_heuristic_costs.items():  # printing each h cost for each node
-    print(f"Heuristic cost for node {node}: {cost}")
+# for node, cost in final_heuristic_costs.items():  # printing each h cost for each node
+#     print(f"Heuristic cost for node {node}: {cost}")
 
 
-#Task 4
+# Task 4
+
+def a_star_search(start_node, goal_node, barrier_nodes):
+    priority_queue = [(0, start_node, [start_node])]  # initializing a priority queue with a tuple having total cost,
+    # current node, and the path
+    visited = set()  # to keep track of visited nodes
+
+    while priority_queue:  # runs as long as it's not empty
+        _, curr_node, path = heapq.heappop(priority_queue)  # pops the node with the lowest heuristic cost from the
+        # queue. the heu cost is ignored and others are taken
+
+        if curr_node == goal_node:  # checks whether its goal node
+            return path, len(visited)
+
+        x, y = divmod(curr_node, 6)  # gets the coordinates of the current node
+        neighbours = sorted([(x + Horizontal[i], y + Vertical[i]) for i in range(8)],
+                            key=lambda pos: (pos[1], pos[0]))  # sorts the list of coordinates based on the second
+        # element (y-coordinate) first and then the first element (x-coordinate)
+
+        for neighbour_X, neighbour_Y in neighbours:
+            if not is_valid_move(neighbour_X, neighbour_Y, barrier_nodes, visited): # check whether the move is valid
+                continue  # if invalid it will go to the next iteration
+
+            visited.add(curr_node)
+            neighbour_node = neighbour_X * 6 + neighbour_Y  # convert the coordinate into node index
+            cost_neighbour = len(path) + 1 + final_heuristic_costs[neighbour_node]  # getting the total cost to reach
+            # the neighbour node considering the length of path,
+            # cost to move to neighbour and manhandle distance cost
+            heapq.heappush(priority_queue, (cost_neighbour, neighbour_node, path + [neighbour_node]))
+            # pushes a tuple into the priority queue containing the total cost, the neighbor node, and the updated path
+
+    return [], len(visited)
+
+
+path, nodes_visited = a_star_search(start_node, goal_node, barrier_nodes)
+print("-----------------A Star Search-----------------")
+print("Visited Nodes:", path)
+print("Time to Find Goal (in minutes):", nodes_visited)
+print("Final Path:", path)
+print("")
