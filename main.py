@@ -1,5 +1,4 @@
 import random
-import heapq
 from queue import PriorityQueue
 
 # Task 1
@@ -22,7 +21,6 @@ goal_node = random.randint(24, 35)
 remaining_nodes = [node for row in maze for node in row if node != start_node and node != goal_node]
 # out of the remaining nodes getting 4 random nodes
 barrier_nodes = random.sample(remaining_nodes, 4)
-print("Barrier Nodes - " + str(barrier_nodes))
 print()
 
 
@@ -43,9 +41,9 @@ def display_maze():
 
 # call the display_maze function to see the maze
 display_maze()
+print()
 
 # Task 2
-
 # initializing direction vectors
 Horizontal = [-1, 0, 1, 0, -1, 1, 1, -1]
 Vertical = [0, -1, 0, 1, -1, -1, 1, 1]
@@ -109,51 +107,63 @@ def heuristic_cost(node, goal_node):
 
 # Task 4
 def a_star_search(start_node, goal_node, barrier_nodes):
+    # Initialize a dictionary to store the cost to reach each node, initially set to infinity
     cost_so_far = {node: float('inf') for node in barrier_nodes}
     cost_so_far[start_node] = 0
+    # Initialize a dictionary to store the total cost for each node, initially set to infinity
     total_cost = {node: float('inf') for node in barrier_nodes}
     total_cost[start_node] = heuristic_cost(start_node, goal_node)
-
+    # Initialize a priority queue to prioritize nodes based on their total cost
     priority_queue = PriorityQueue()
     priority_queue.put((heuristic_cost(start_node, goal_node), heuristic_cost(start_node, goal_node), start_node))
+    # Initialize dictionaries to store the path and set to store visited nodes
     path = {}
     visited = set()
 
     while not priority_queue.empty():
+        # Get the node with the lowest total cost from the priority queue
         curr_node = priority_queue.get()[2]
+        # Check if the goal node is reached
         if curr_node == goal_node:
             break
 
         x, y = divmod(curr_node, 6)  # gets the coordinates of the current node
-        neighbours = [(x + Horizontal[i], y + Vertical[i]) for i in range(8)]
+        neighbours = [(x + Horizontal[i], y + Vertical[i]) for i in range(8)]  # Generate neighbors of the current node
 
         for neighbour_X, neighbour_Y in neighbours:
             if not is_valid_move(neighbour_X, neighbour_Y, barrier_nodes, visited):  # check whether the move is valid
                 continue  # if invalid it will go to the next iteration
-
+            # convert to node index from x and y coordinates
             neighbour_node = neighbour_X * 6 + neighbour_Y
+            # Initialize cost for the neighbor if not present in total_cost
             if neighbour_node not in total_cost:
                 total_cost[neighbour_node] = float('inf')
-
+            # Calculate indefinite cost to reach the neighbor
             temp_cost_so_far = cost_so_far[curr_node] + 1
             temp_total_cost = temp_cost_so_far + heuristic_cost(neighbour_node, goal_node)
-
+            # Mark the neighbor as visited
+            visited.add(neighbour_node)
+            # Check if the newly calculated total cost to reach the neighbor is less than the previously recorded
+            # total cost
             if temp_total_cost < total_cost[neighbour_node]:
+                # Update the cost to reach the neighbor so far
                 cost_so_far[neighbour_node] = temp_cost_so_far
+                # Update the total cost to reach the neighbor
                 total_cost[neighbour_node] = temp_total_cost
+                # Put the neighbor in the priority queue with its updated total cost and heuristic cost
                 priority_queue.put((temp_total_cost, heuristic_cost(neighbour_node, goal_node), neighbour_node))
+                # Record the current node as the predecessor for the neighbor in the path dictionary
                 path[neighbour_node] = curr_node
-                visited.add(neighbour_node)
 
     forward_path = []
-    curr_node = goal_node
-
+    curr_node = goal_node  # Set the current node to be the goal node
+    # Continue looping until the current node reaches the start node
     while curr_node != start_node:
-        forward_path.append(curr_node)
-        curr_node = path[curr_node]
+        forward_path.append(curr_node)  # Add the current node to the forward path
+        curr_node = path[curr_node]  # Update the current node to its predecessor in the path dictionary
 
-    forward_path.append(start_node)
-    forward_path.reverse()
+    forward_path.append(start_node)  # Add the start node to the forward path
+    forward_path.reverse()  # Reverse the forward path to obtain the correct order from start to goal
 
     return list(visited), forward_path
 
