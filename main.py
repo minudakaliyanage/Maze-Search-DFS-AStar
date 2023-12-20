@@ -81,8 +81,9 @@ def dfs(start_node, goal_node, barrier_nodes):
         for neighbour_X, neighbour_Y in neighbours:
             if not is_valid_move(neighbour_X, neighbour_Y, barrier_nodes, visited):  # check whether the move is valid
                 continue  # if invalid it will go to the next iteration
-            visited.add(curr_node)
+
             neighbour_node = neighbour_X * 6 + neighbour_Y  # convert the coordinate into node index
+            visited.add(neighbour_node)
             explored.append(neighbour_node)
             stack.append((neighbour_node, path + [neighbour_node]))  # neighbor node added to the stack
     # if the stack becomes empty and the goal is not reached
