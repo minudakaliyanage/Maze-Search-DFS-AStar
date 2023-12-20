@@ -52,10 +52,10 @@ Vertical = [0, -1, 0, 1, -1, -1, 1, 1]
 # check whether the move is going to be valid
 def is_valid_move(x, y, barrier_nodes, visited):
     # checks whether it's inside the boundaries of the maze and whether there is a barrier or not
-    if (x < 0 or y < 0 or x >= 6 or y >= 6 or (x * 6 + y) in barrier_nodes):
+    if x < 0 or y < 0 or x >= 6 or y >= 6 or (x * 6 + y) in barrier_nodes:
         return False
     # checks whether the node is already visited
-    if (x * 6 + y in visited):
+    if x * 6 + y in visited:
         return False
 
     return True
@@ -153,6 +153,7 @@ def a_star_search(start_node, goal_node, barrier_nodes):
                 # Put the neighbor in the priority queue with its updated total cost and heuristic cost
                 priority_queue.put((temp_total_cost, heuristic_cost(neighbour_node, goal_node), neighbour_node))
                 # Record the current node as the predecessor for the neighbor in the path dictionary
+                # basically it stores {curr_node: previous node}
                 path[neighbour_node] = curr_node
 
     forward_path = []
@@ -165,7 +166,7 @@ def a_star_search(start_node, goal_node, barrier_nodes):
     forward_path.append(start_node)  # Add the start node to the forward path
     forward_path.reverse()  # Reverse the forward path to obtain the correct order from start to goal
 
-    return list(visited), forward_path
+    return list(path), forward_path
 
 
 nodes_visited, final_path = a_star_search(start_node, goal_node, barrier_nodes)
