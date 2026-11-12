@@ -44,7 +44,7 @@ In this run, **A\* explores roughly half as many nodes as DFS and finds a path 3
 ## 🚀 Run it
 
 ```bash
-python main.py
+python maze_search.py
 ```
 
 Each run generates a new random maze. Python 3 is all you need (only `random` and `queue` are used).
@@ -53,7 +53,7 @@ Each run generates a new random maze. Python 3 is all you need (only `random` an
 
 | File | Description |
 |---|---|
-| `main.py` | Maze generation, display, DFS and A* implementations |
+| `maze_search.py` | Maze generation, display, DFS and A* implementations |
 
 ---
 
